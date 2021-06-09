@@ -1,4 +1,10 @@
 channels:
+        - conda-forge
         - rdkit
 dependencies:
         - rdkit
+        - ipython
+        - ipywidgets
+        - appmode
+        - ipympl
+        - numpy
