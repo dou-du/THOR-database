@@ -1,0 +1,4 @@
+channels:
+        - rdkit
+dependencies:
+        - rdkit
