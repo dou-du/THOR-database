@@ -161,8 +161,7 @@ def calc_broadened_conv_spectrum(freqs,rawints1,xmin, xmax, res, gamma1,gamma2):
             ones=1 #np.full((np.shape(rawints1[f,state])),1)
             
             spectrum+=rawints1[f,state]*displ_lorentz0(l0,freqs[f,state],ones,numpoints,xmin,res)*displ_lorentz0(l02,freqs[f,state],ones,numpoints,xmin,res)
-        sp_ints[f]=spectrum/(math.pi**2) * 1/4 * gamma1*gamma2
-    print(ones)    
+        sp_ints[f]=spectrum/(math.pi**2) * 1/4 * gamma1*gamma2  
     return wn, sp_ints
 
 # create broadened spectrum and get target properties
