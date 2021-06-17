@@ -92,7 +92,7 @@ def get_targets(R_ints,IR_ints,prod_ints,
 
 # functions for calculating broadened spectrum for all input files
 def lorentz0(res,gamma):
-    rmax=gamma*20
+    rmax=gamma*30
     npoints=int(round(rmax/res))
     g=np.zeros((2*npoints))
     xs=[k*res for k in range(npoints)]
@@ -104,14 +104,17 @@ def displ_lorentz0(l0,x0,y,numpoints,xmin,res):
     disp=np.zeros((numpoints))
     lenl=len(l0)
     p0=int(round((x0-xmin)/res))
-#    print(x0,p0,lenl) 
     if p0>numpoints+lenl or p0<-lenl:
         return disp
     if p0>numpoints:
-        for p in range(numpoints+lenl-p0):            
+        for p in range(numpoints+lenl-p0): 
+            if numpoints-p-1 <0:
+                break
             disp[numpoints-p-1]=y*l0[p0-numpoints+p]
     elif p0<0:
         for p in range(lenl+p0):  
+            if p==numpoints:
+                break
             disp[p]=y*l0[p-p0]
     else:
         for p in range(min(numpoints-p0,lenl)):  
@@ -138,6 +141,8 @@ def calc_broadened_spectrum(freqs,rawints,xmin, xmax, res, gamma):
         sp_ints[f]=spectrum/math.pi * 1/2 * gamma
         
     return wn, sp_ints
+
+
 
 def calc_broadened_conv_spectrum(freqs,rawints1,xmin, xmax, res, gamma1,gamma2):
     l0=lorentz0(res,gamma1)
@@ -212,8 +217,8 @@ def create_average_spec_single(fr,  ir_av, r_av, conv_av,xmin=30,xmax=1000,res=0
     
     # scale frequencies
     freqs=sclf*freqs
-    fmin=xmin-100
-    fmax=xmax+100 
+    fmin=xmin-200
+    fmax=xmax+200 
     
     maxdof=np.shape(freqs)[1]
     R_fre=np.zeros((len(freqs),maxdof))
