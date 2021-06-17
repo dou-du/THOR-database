@@ -139,9 +139,29 @@ def calc_broadened_spectrum(freqs,rawints,xmin, xmax, res, gamma):
         
     return wn, sp_ints
 
+def calc_broadened_conv_spectrum(freqs,rawints1,xmin, xmax, res, gamma1,gamma2):
+    l0=lorentz0(res,gamma1)
+    l02=lorentz0(res,gamma2)
+    numfiles=len(freqs)
+    numpoints=int(round((xmax-xmin)/res))
+    wn=np.zeros(numpoints)
+    sp_ints=np.zeros((numfiles,numpoints)) 
+    x=xmin
+    for i in range(0,numpoints):
+        wn[i]=x
+        x+=res      
+    for f in range(0,numfiles):
+        spectrum=np.zeros((numpoints))
+        for state in range(0,len(freqs[f])):
+            ones=1 #np.full((np.shape(rawints1[f,state])),1)
+            
+            spectrum+=rawints1[f,state]*displ_lorentz0(l0,freqs[f,state],ones,numpoints,xmin,res)*displ_lorentz0(l02,freqs[f,state],ones,numpoints,xmin,res)
+        sp_ints[f]=spectrum/(math.pi**2) * 1/4 * gamma1*gamma2
+    print(ones)    
+    return wn, sp_ints
 
 # create broadened spectrum and get target properties
-def create_average_spec(xmin=30,xmax=1000,res=0.5,gamma=5,sclf=0.98):
+def create_average_spec(xmin=30,xmax=1000,res=0.5,gammaIR=5,gammaR=5,sclf=0.98):
     freqs, Rints, IRints, Pints, smiles, fname=read_in_average_ints()
     
     # scale frequencies
@@ -176,14 +196,15 @@ def create_average_spec(xmin=30,xmax=1000,res=0.5,gamma=5,sclf=0.98):
     # average all orientations
     print("Calculating broadened spectra...")
     t1 = time.time()
-    wn, IR_spec = calc_broadened_spectrum(freqs,IR_fre,xmin, xmax, res, gamma)
-    wn, R_spec = calc_broadened_spectrum(freqs,R_fre,xmin, xmax, res, gamma)
+    wn, IR_spec = calc_broadened_spectrum(freqs,IR_fre,xmin, xmax, res, gammaIR)
+    wn, R_spec = calc_broadened_spectrum(freqs,R_fre,xmin, xmax, res, gammaR)
+    wn, conv_spec=calc_broadened_conv_spectrum(freqs,P_fre,xmin, xmax, res, gammaIR,gammaR)
     t2 = time.time()
     print("Done \nTime for broadened spectra = {:.1f} s".format(t2-t1))
     
-    return wn,R_spec,IR_spec,freqs,prod_ints,R_ints,IR_ints,smiles,fname,P,A,R
+    return wn,R_spec,IR_spec,conv_spec,freqs,prod_ints,R_ints,IR_ints,smiles,fname,P,A,R
 
-def create_average_spec_single(fr,  ir_av, r_av, conv_av,xmin=30,xmax=1000,res=0.5,gamma=5,sclf=0.98):
+def create_average_spec_single(fr,  ir_av, r_av, conv_av,xmin=30,xmax=1000,res=0.5,gammaIR=5,gammaR=5,sclf=0.98):
     freqs=np.reshape(fr,(1,-1)) 
     Rints=np.reshape(r_av,(1,-1)) 
     IRints=np.reshape(ir_av,(1,-1)) 
@@ -221,12 +242,13 @@ def create_average_spec_single(fr,  ir_av, r_av, conv_av,xmin=30,xmax=1000,res=0
     # average all orientations
 #    print("Calculating broadened spectra...")
 #    t1 = time.time()
-    wn, IR_spec = calc_broadened_spectrum(freqs,IR_fre,xmin, xmax, res, gamma)
-    wn, R_spec = calc_broadened_spectrum(freqs,R_fre,xmin, xmax, res, gamma)
+    wn, IR_spec = calc_broadened_spectrum(freqs,IR_fre,xmin, xmax, res, gammaIR)
+    wn, R_spec = calc_broadened_spectrum(freqs,R_fre,xmin, xmax, res, gammaR)
+    wn, conv_spec=calc_broadened_conv_spectrum(freqs,P_fre,xmin, xmax, res, gammaIR,gammaR)
 #    t2 = time.time()
 #    print("Done \nTime for broadened spectra = {:.1f} s".format(t2-t1))
     
-    return wn,R_spec,IR_spec,freqs,prod_ints,R_ints,IR_ints,P,A,R
+    return wn,R_spec[0],IR_spec[0],conv_spec[0],freqs[0],prod_ints[0],R_ints[0],IR_ints[0],P,A,R
     
 
 
