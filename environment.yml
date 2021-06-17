@@ -8,3 +8,4 @@ dependencies:
         - appmode
         - ipympl
         - numpy
+        - openbabel
