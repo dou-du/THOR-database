@@ -383,6 +383,18 @@ def plot_spectra(s_wn_av,R_ints_av,IR_ints_av,conv_ints_av,fmin,fmax,res,mcode,s
         plt.savefig("./figures/{}_spectrum.png".format(mcode),dpi=100)
     plt.show()
     
+# plot polar plot of IR, Raman, conv value for initial molecular orientation
+def polar_plot(theta,r):
+    plt.rcParams.update({'font.size': 14})
+    fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
+    ax.plot(theta,r,linewidth=7.0)
+    #ax.set_rmax(max(r))
+    ax.set_rticks([])
+    #ax.set_rlabel_position(45)  
+    ax.grid(True)
+    #ax.set_title("Polar plot IR, R, conv", va='bottom')
+    plt.show()
+    
 # write html summary of suitability for THz detection
 def write_html(bestmols,smiles,P,A,R,fnam,fmin,fmax,target,tmin,tmax,target_type,sigma=0):
     htmlheader = """

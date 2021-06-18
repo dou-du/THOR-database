@@ -69,5 +69,14 @@ def single_rotP(p,a=0,b=0,c=0):
     rot=np.matmul(R,np.matmul(p,np.transpose(R)))
     return rot
 
-
+def unit_rot(axis,rad):
+    if axis==1 :
+        R=np.array([[math.cos(rad),-math.sin(rad),0],[math.sin(rad),math.cos(rad),0],[0,0,1]]) 
+    elif axis==2 :
+        R=np.array([[math.cos(rad),0,math.sin(rad)],[0,1,0],[-math.sin(rad),0,math.cos(rad)]])
+    elif axis==3 :
+        R=np.array([[1,0,0],[0,math.cos(rad),-math.sin(rad)],[0,math.sin(rad),math.cos(rad)]])
+    else :
+        R=np.array([[1,0,0],[0,1,0],[0,0,1]])
+    return R
 
