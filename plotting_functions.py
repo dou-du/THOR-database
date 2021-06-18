@@ -257,7 +257,7 @@ def create_average_spec_single(fr,  ir_av, r_av, conv_av,xmin=30,xmax=1000,res=0
 
 
 # build molecules from smiles using RDKit
-def build_molecules(smiles):
+def build_molecule(smiles):
     mols=[]
     errs=[]
     for i in range(0,len(smiles)):
