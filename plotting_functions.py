@@ -126,20 +126,18 @@ def displ_lorentz0(l0,x0,y,numpoints,xmin,res):
     
 def calc_broadened_spectrum(freqs,rawints,xmin, xmax, res, gamma):
     l0=lorentz0(res,gamma)
-    numfiles=len(freqs)
     numpoints=int(round((xmax-xmin)/res))
     wn=np.zeros(numpoints)
-    sp_ints=np.zeros((numfiles,numpoints)) 
+    sp_ints=np.zeros((numpoints)) 
     x=xmin
     for i in range(0,numpoints):
         wn[i]=x
         x+=res      
-    for f in range(0,numfiles):
-        spectrum=np.zeros((numpoints))
-        for state in range(0,len(freqs[f])):
-            spectrum+=displ_lorentz0(l0,freqs[f,state],rawints[f,state],numpoints,xmin,res)
-        sp_ints[f]=spectrum/math.pi * 1/2 * gamma
-        
+
+    spectrum=np.zeros((numpoints))
+    for state in range(0,len(freqs)):
+        spectrum+=displ_lorentz0(l0,freqs[state],rawints[state],numpoints,xmin,res)
+    sp_ints=spectrum/math.pi * 1/2 * gamma
     return wn, sp_ints
 
 
@@ -147,25 +145,69 @@ def calc_broadened_spectrum(freqs,rawints,xmin, xmax, res, gamma):
 def calc_broadened_conv_spectrum(freqs,rawints1,xmin, xmax, res, gamma1,gamma2):
     l0=lorentz0(res,gamma1)
     l02=lorentz0(res,gamma2)
-    numfiles=len(freqs)
     numpoints=int(round((xmax-xmin)/res))
     wn=np.zeros(numpoints)
-    sp_ints=np.zeros((numfiles,numpoints)) 
+    sp_ints=np.zeros((numpoints)) 
     x=xmin
     for i in range(0,numpoints):
         wn[i]=x
         x+=res      
-    for f in range(0,numfiles):
-        spectrum=np.zeros((numpoints))
-        for state in range(0,len(freqs[f])):
-            ones=1 #np.full((np.shape(rawints1[f,state])),1)
+
+    spectrum=np.zeros((numpoints))
+    for state in range(0,len(freqs)):
+        ones=1 #np.full((np.shape(rawints1[f,state])),1)
             
-            spectrum+=rawints1[f,state]*displ_lorentz0(l0,freqs[f,state],ones,numpoints,xmin,res)*displ_lorentz0(l02,freqs[f,state],ones,numpoints,xmin,res)
-        sp_ints[f]=spectrum/(math.pi**2) * 1/4 * gamma1*gamma2  
+        spectrum+=rawints1[state]*displ_lorentz0(l0,freqs[state],ones,numpoints,xmin,res)*displ_lorentz0(l02,freqs[state],ones,numpoints,xmin,res)
+        sp_ints=spectrum/(math.pi**2) * 1/4 * gamma1*gamma2  
     return wn, sp_ints
 
 # create broadened spectrum and get target properties
-def create_average_spec(xmin=30,xmax=1000,res=0.5,gammaIR=5,gammaR=5,sclf=0.98):
+#def create_average_spec(xmin=30,xmax=1000,res=0.5,gammaIR=5,gammaR=5,sclf=0.98):
+#    freqs, Rints, IRints, Pints, smiles, fname=read_in_average_ints()
+#    
+#    # scale frequencies
+#    freqs=sclf*freqs
+#    fmin=xmin-100
+#    fmax=xmax+100 
+#    
+#    maxdof=np.shape(freqs)[1]
+#    R_fre=np.zeros((len(freqs),maxdof))
+#    IR_fre=np.zeros((len(freqs),maxdof))
+#    P_fre=np.zeros((len(freqs),maxdof))
+#    for i in range(0,len(freqs)):
+#        for l in range(0,maxdof):
+#            if(fmin<=freqs[i,l]<fmax):
+#                R_fre[i,l]=Rints[i,l]
+#                IR_fre[i,l]=IRints[i,l]
+#                P_fre[i,l]=Pints[i,l]
+#                
+#    prod_ints=np.zeros_like(IR_fre)
+#    R_ints=np.zeros_like(IR_fre)
+#    IR_ints=np.zeros_like(IR_fre)
+#    for mm,frmm in enumerate(freqs):
+#        for f,fr in enumerate(frmm):
+#            if fr<xmin or fr>xmax:
+#                continue
+#            prod_ints[mm,f]=P_fre[mm,f] 
+#            R_ints[mm,f]=R_fre[mm,f]
+#            IR_ints[mm,f]=IR_fre[mm,f]
+#            
+#    P,A,R=get_targets(R_ints,IR_ints,prod_ints)
+#    print("Target properties calculated")
+#    # average all orientations
+#    print("Calculating broadened spectra...")
+#    t1 = time.time()
+#    wn, IR_spec = calc_broadened_spectrum(freqs,IR_fre,xmin, xmax, res, gammaIR)
+#    wn, R_spec = calc_broadened_spectrum(freqs,R_fre,xmin, xmax, res, gammaR)
+#    wn, conv_spec=calc_broadened_conv_spectrum(freqs,P_fre,xmin, xmax, res, gammaIR,gammaR)
+#    t2 = time.time()
+#    print("Done \nTime for broadened spectra = {:.1f} s".format(t2-t1))
+#    
+#    return wn,R_spec,IR_spec,conv_spec,freqs,prod_ints,R_ints,IR_ints,smiles,fname,P,A,R
+
+
+# create broadened spectrum and get target properties
+def get_intensities(xmin=30,xmax=1000,sclf=0.98):
     freqs, Rints, IRints, Pints, smiles, fname=read_in_average_ints()
     
     # scale frequencies
@@ -197,51 +239,38 @@ def create_average_spec(xmin=30,xmax=1000,res=0.5,gammaIR=5,gammaR=5,sclf=0.98):
             
     P,A,R=get_targets(R_ints,IR_ints,prod_ints)
     print("Target properties calculated")
-    # average all orientations
-    print("Calculating broadened spectra...")
-    t1 = time.time()
-    wn, IR_spec = calc_broadened_spectrum(freqs,IR_fre,xmin, xmax, res, gammaIR)
-    wn, R_spec = calc_broadened_spectrum(freqs,R_fre,xmin, xmax, res, gammaR)
-    wn, conv_spec=calc_broadened_conv_spectrum(freqs,P_fre,xmin, xmax, res, gammaIR,gammaR)
-    t2 = time.time()
-    print("Done \nTime for broadened spectra = {:.1f} s".format(t2-t1))
     
-    return wn,R_spec,IR_spec,conv_spec,freqs,prod_ints,R_ints,IR_ints,smiles,fname,P,A,R
+    return freqs,prod_ints,R_ints,IR_ints,smiles,fname,P,A,R,R_fre,IR_fre,P_fre
 
-def create_average_spec_single(fr,  ir_av, r_av, conv_av,xmin=30,xmax=1000,res=0.5,gammaIR=5,gammaR=5,sclf=0.98):
-    freqs=np.reshape(fr,(1,-1)) 
-    Rints=np.reshape(r_av,(1,-1)) 
-    IRints=np.reshape(ir_av,(1,-1)) 
-    Pints=np.reshape(conv_av,(1,-1))  
+def create_average_spec_single(freqs,  IRints, Rints, Pints,xmin=30,xmax=1000,res=0.5,gammaIR=5,gammaR=5,sclf=0.98):
     
     # scale frequencies
     freqs=sclf*freqs
     fmin=xmin-200
     fmax=xmax+200 
     
-    maxdof=np.shape(freqs)[1]
-    R_fre=np.zeros((len(freqs),maxdof))
-    IR_fre=np.zeros((len(freqs),maxdof))
-    P_fre=np.zeros((len(freqs),maxdof))
-    for i in range(0,len(freqs)):
-        for l in range(0,maxdof):
-            if(fmin<=freqs[i,l]<fmax):
-                R_fre[i,l]=Rints[i,l]
-                IR_fre[i,l]=IRints[i,l]
-                P_fre[i,l]=Pints[i,l]
+    maxdof=len(freqs)
+    R_fre=np.zeros((maxdof))
+    IR_fre=np.zeros((maxdof))
+    P_fre=np.zeros((maxdof))
+
+    for l in range(0,maxdof):
+        if(fmin<=freqs[l]<fmax):
+                R_fre[l]=Rints[l]
+                IR_fre[l]=IRints[l]
+                P_fre[l]=Pints[l]
                 
     prod_ints=np.zeros_like(IR_fre)
     R_ints=np.zeros_like(IR_fre)
     IR_ints=np.zeros_like(IR_fre)
-    for mm,frmm in enumerate(freqs):
-        for f,fr in enumerate(frmm):
-            if fr<xmin or fr>xmax:
-                continue
-            prod_ints[mm,f]=P_fre[mm,f] 
-            R_ints[mm,f]=R_fre[mm,f]
-            IR_ints[mm,f]=IR_fre[mm,f]
+    for f,fr in enumerate(freqs):
+        if fr<xmin or fr>xmax:
+            continue
+        prod_ints[f]=P_fre[f] 
+        R_ints[f]=R_fre[f]
+        IR_ints[f]=IR_fre[f]
             
-    P,A,R=get_targets(R_ints,IR_ints,prod_ints)
+ #   P,A,R=get_targets(R_ints,IR_ints,prod_ints)
 #    print("Target properties calculated")
     # average all orientations
 #    print("Calculating broadened spectra...")
@@ -252,12 +281,20 @@ def create_average_spec_single(fr,  ir_av, r_av, conv_av,xmin=30,xmax=1000,res=0
 #    t2 = time.time()
 #    print("Done \nTime for broadened spectra = {:.1f} s".format(t2-t1))
     
-    return wn,R_spec[0],IR_spec[0],conv_spec[0],freqs[0],prod_ints[0],R_ints[0],IR_ints[0],P,A,R
+    return wn,R_spec,IR_spec,conv_spec,freqs[0],prod_ints[0],R_ints[0],IR_ints[0] #,P,A,R
     
-
+def broadened_spec_single(freqs,  IR_fre, R_fre, P_fre,xmin=30,xmax=1000,res=0.5,gammaIR=5,gammaR=5,sclf=0.98):
+#    t1 = time.time()
+    wn, IR_spec = calc_broadened_spectrum(freqs,IR_fre,xmin, xmax, res, gammaIR)
+    wn, R_spec = calc_broadened_spectrum(freqs,R_fre,xmin, xmax, res, gammaR)
+    wn, conv_spec=calc_broadened_conv_spectrum(freqs,P_fre,xmin, xmax, res, gammaIR,gammaR)
+#    t2 = time.time()
+#    print("Done \nTime for broadened spectra = {:.1f} s".format(t2-t1))
+    
+    return wn,R_spec,IR_spec,conv_spec
 
 # build molecules from smiles using RDKit
-def build_molecule(smiles):
+def build_molecules(smiles):
     mols=[]
     errs=[]
     for i in range(0,len(smiles)):
@@ -303,26 +340,27 @@ def func(x, pos):
 y_format = tkr.FuncFormatter(func)  # make formatter
 
 # plot IR, Raman, THz Conversion spectra
-def plot_spectra(mm,s_wn_av,R_ints_av,IR_ints_av,freqs_np,prod_ints,fmin,fmax,res,mcode,savespec=False):
+def plot_spectra(s_wn_av,R_ints_av,IR_ints_av,conv_ints_av,fmin,fmax,res,mcode,savespec=False):
     plt.rcParams.update({'font.size': 16})
     fig=plt.figure()
     fig.set_size_inches(8, 5)
     ax2=fig.add_subplot(311)
     ax3=fig.add_subplot(312,sharex=ax2)
     ax1=fig.add_subplot(313,sharex=ax2)
-    ax3.plot(s_wn_av,R_ints_av[mm,:],alpha=1,label='Raman')
-    ax2.plot(s_wn_av,IR_ints_av[mm,:],alpha=1,color='r',label='IR')  
-    markerline, stemline, baseline, =ax1.stem(freqs_np[mm,:],prod_ints[mm,:],
-                                                 'k',markerfmt='ok',basefmt='k',
-                                                 use_line_collection=True,bottom=0,label='Conv.')
-    plt.setp(stemline, linewidth = 1.25)
-    plt.setp(markerline, markersize = 6)    
+    ax3.plot(s_wn_av,R_ints_av,alpha=1,color='b',label='Raman')
+    ax2.plot(s_wn_av,IR_ints_av,alpha=1,color='r',label='IR')  
+    ax1.plot(s_wn_av,conv_ints_av,alpha=1,color='purple',label='Conv')  
+#    markerline, stemline, baseline, =ax1.stem(freqs_np,prod_ints,
+#                                                 'k',markerfmt='ok',basefmt='k',
+#                                                 use_line_collection=True,bottom=0,label='Conv.')
+#    plt.setp(stemline, linewidth = 1.25)
+#    plt.setp(markerline, markersize = 6)    
     plt.xlim(fmin,fmax)
     pmin=int(fmin/res)
     pmax=int(fmax/res)
-    maxpr=np.max(prod_ints[mm])
-    maxI=np.max(IR_ints_av[mm,pmin:pmax])
-    maxR=np.max(R_ints_av[mm,pmin:pmax])
+    maxpr=np.max(conv_ints_av[pmin:pmax]) #np.max(prod_ints)
+    maxI=np.max(IR_ints_av[pmin:pmax])
+    maxR=np.max(R_ints_av[pmin:pmax])
     ax1.set_ylim(-maxpr/100,1.2*maxpr)
     ax2.set_ylim(-maxI/100,1.2*maxI)
     ax3.set_ylim(-maxR/100,1.2*maxR)
