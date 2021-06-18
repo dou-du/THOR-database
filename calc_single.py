@@ -43,3 +43,13 @@ def single_rot_R(p,a=0,b=0,c=0):
     q=np.matmul(np.transpose(R),e)
     raman=math.pow(np.matmul(q,np.matmul(p,np.transpose(q))),2)
     return raman
+
+def single_polar_IR(d,r,e):
+    q=np.matmul(np.transpose(r),e)
+    ir=math.pow(np.matmul(q,d),2)
+    return ir
+
+def single_polar_R(p,r,e):
+    q=np.matmul(np.transpose(r),e)
+    raman=math.pow(np.matmul(q,np.matmul(p,np.transpose(q))),2)
+    return raman
