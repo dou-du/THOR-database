@@ -1,5 +1,5 @@
 freq-19813-90-2.out
- OpenBabel06182112423D
+ OpenBabel06182117193D
 Gaussian home/mmm0534/bin/g09E/g09 #p opt freq=raman b3lyp/def2svp pop(nbo) nosy
  23 24  0  0  0  0  0  0  0  0999 V2000
    -4.6429   -7.5931   -0.5130 C   0  0  0  0  0  0  0  0  0  0  0  0
