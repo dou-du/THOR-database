@@ -11,6 +11,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as tkr
+import mplcursors
 from rdkit import Chem
 
 # read in frequency and intensity data from datafiles
@@ -349,13 +350,14 @@ def plot_spectra(mm,s_wn_av,R_ints_av,IR_ints_av,freqs_np,prod_ints,fmin,fmax,re
 def polar_plot(theta,r):
     plt.rcParams.update({'font.size': 14})
     fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
-    ax.plot(theta,r,linewidth=7.0)
+    line=ax.plot(theta,r,linewidth=7.0)
     #ax.set_rmax(max(r))
     ax.set_rticks([])
     #ax.set_rlabel_position(45)  
     ax.grid(True)
     #ax.set_title("Polar plot IR, R, conv", va='bottom')
-    plt.show()
+    #plt.show()
+    return line
     
 # write html summary of suitability for THz detection
 def write_html(bestmols,smiles,P,A,R,fnam,fmin,fmax,target,tmin,tmax,target_type,sigma=0):
