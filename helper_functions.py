@@ -39,13 +39,13 @@ def symmetrize(a):
 
 # Rotate molecule to reference orientation
 # not finished yet
-def rotate_to_reference(D,P,Z,Q):
-    rot=np.zeros((3,3))
-    Prot=np.zeros_like(P)
-    Drot=np.zeros_like(D)
-    Prot=np.matmul(np.matmul(rot,P),np.transpose(rot))
-    Drot=np.matmul(rot,D)
-    return Drot,Prot
+#def rotate_to_reference(D,P,Z,Q):
+#    rot=np.zeros((3,3))
+#    Prot=np.zeros_like(P)
+#    Drot=np.zeros_like(D)
+#    Prot=np.matmul(np.matmul(rot,P),np.transpose(rot))
+#    Drot=np.matmul(rot,D)
+#    return Drot,Prot
 
 def single_rotD(p,a=0,b=0,c=0):
  #   e=np.array([0.,0.,1.0])
