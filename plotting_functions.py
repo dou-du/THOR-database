@@ -282,7 +282,7 @@ def create_average_spec_single(freqs,  IRints, Rints, Pints,xmin=30,xmax=1000,re
 #    t2 = time.time()
 #    print("Done \nTime for broadened spectra = {:.1f} s".format(t2-t1))
     
-    return wn,R_spec,IR_spec,conv_spec,freqs[0],prod_ints[0],R_ints[0],IR_ints[0] #,P,A,R
+    return wn,R_spec,IR_spec,conv_spec,freqs,prod_ints,R_ints,IR_ints #,P,A,R
     
 def broadened_spec_single(freqs,  IR_fre, R_fre, P_fre,xmin=30,xmax=1000,res=0.5,gammaIR=5,gammaR=5,sclf=0.98):
 #    t1 = time.time()
