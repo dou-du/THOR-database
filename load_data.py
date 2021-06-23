@@ -7,6 +7,10 @@ Created on Wed Jun  9 11:30:47 2021
 import numpy as np
 import math
 
+
+def symmetrize(a):
+    return a + a.T - np.diag(a.diagonal())
+
 # load Hessian from g09 fchk
 # to be diagonalized to get normal modes
 def load_fchk(filename):
@@ -292,14 +296,15 @@ def load_from_Hessian(filename):
     D_normal=np.zeros((nm,3))
     P_normal=np.zeros((nm,3,3))
   #  print("P ",P)
+    Psym=np.zeros((nm,3,3))
     for m in range(nm):
         for i in range(nat):
             for al in range(3):
                     D_normal[m,:]+=D[i,al,:]*Qcart[m,i,al]/np.sqrt(redm[m])#/np.sqrt(W[i])
                     P_normal[m,:,:]+=P[i,al,:,:]*Qcart[m,i,al]/np.sqrt(redm[m])
-    
+        Psym[m]=symmetrize(P_normal[m,:,:])
     sclf=5140.487127157137 # get frequencies in cm-1 
-    return ww*sclf,vw,Z,W,D_normal,P_normal,nat,aniso    
+    return ww*sclf,vw,Z,W,D_normal,Psym,nat,aniso    
     
 # load data from Gaussian output             
 def load_from_output(filename):
@@ -319,30 +324,32 @@ def load_from_output(filename):
     D_normal=np.zeros((nm,3))
     P_normal=np.zeros((nm,3,3))
   #  print("P ",P)
+    Psym=np.zeros((nm,3,3))
     for m in range(nm):
         for i in range(nat):
             for al in range(3):
                     D_normal[m,:]+=D[i,al,:]*Qcart[m,i,al]/np.sqrt(redm[m])#/np.sqrt(W[i])
                     P_normal[m,:,:]+=P[i,al,:,:]*Qcart[m,i,al]/np.sqrt(redm[m])
     
-    return fr,Z,Qcart,D_normal,P_normal,nat,aniso 
+        Psym[m]=symmetrize(P_normal[m,:,:])
+    return fr,Z,Qcart,D_normal,Psym,nat,aniso 
 
 def load_file(filename):
     # read from fchk more accurate
     if filename.endswith(".fchk"):
         try:
-            fr,Q,Z,W,D,P0,nat,aniso=load_from_Hessian(filename)
+            fr,Q,Z,W,D,P,nat,aniso=load_from_Hessian(filename)
             print("Loaded ",filename)
-            return fr,Z,Q,D,P0,nat,aniso
+            return fr,Z,Q,D,P,nat,aniso
         except:
             print("Error with loading file ",filename)
             return 
     # read from output less accurate            
     if filename.endswith(".out"):
         try:
-            fr,Z,Q,D,P0,nat,aniso =load_from_output(filename) 
+            fr,Z,Q,D,P,nat,aniso =load_from_output(filename) 
             print("Loaded ",filename)
-            return fr,Z,Q,D,P0,nat,aniso
+            return fr,Z,Q,D,P,nat,aniso
         except:
             print("Error with loading file ",filename)
             return
