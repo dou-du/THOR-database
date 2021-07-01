@@ -387,9 +387,10 @@ def plot_spectra(s_wn_av,R_ints_av,IR_ints_av,conv_ints_av,fmin,fmax,res,mcode,s
     
 # plot polar plot of IR, Raman, conv value for initial molecular orientation
 def polar_plot(theta,r):
-    plt.rcParams.update({'font.size': 14})
+    plt.rcParams.update({'font.size': 12})
     plt.close('Polar plot')
     fig, ax = plt.subplots(num='Polar plot',subplot_kw={'projection': 'polar'})
+    fig.set_size_inches(4, 4)
     line=ax.plot(theta,r,linewidth=7.0)
     #ax.set_rmax(max(r))
     ax.set_rticks([])

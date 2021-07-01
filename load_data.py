@@ -295,16 +295,19 @@ def load_from_Hessian(filename):
    # print(Qcart)
     D_normal=np.zeros((nm,3))
     P_normal=np.zeros((nm,3,3))
+#    Qscaled=np.zeros_like(Qcart)
   #  print("P ",P)
     Psym=np.zeros((nm,3,3))
     for m in range(nm):
         for i in range(nat):
             for al in range(3):
+                #    Qscaled[m,i,al]=Qcart[m,i,al]/np.sqrt(redm[m])
                     D_normal[m,:]+=D[i,al,:]*Qcart[m,i,al]/np.sqrt(redm[m])#/np.sqrt(W[i])
                     P_normal[m,:,:]+=P[i,al,:,:]*Qcart[m,i,al]/np.sqrt(redm[m])
         Psym[m]=symmetrize(P_normal[m,:,:])
     sclf=5140.487127157137 # get frequencies in cm-1 
-    return ww*sclf,vw,Z,W,D_normal,Psym,nat,aniso    
+    return ww*sclf,Qcart,Z,W,D_normal,Psym,nat,aniso    
+    # return ww*sclf,vw,Z,W,D_normal,Psym,nat,aniso    
     
 # load data from Gaussian output             
 def load_from_output(filename):
