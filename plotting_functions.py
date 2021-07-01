@@ -5,13 +5,13 @@ Created on Tue May 11 10:51:46 2021
 @author: Zsuzsanna Koczor-Benda, UCL
 """
 from __future__ import print_function
-import time
+#import time
 import urllib 
 import math
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as tkr
-import mplcursors
+#import mplcursors
 from rdkit import Chem
 
 # read in frequency and intensity data from datafiles
@@ -356,9 +356,10 @@ def plot_spectra(s_wn_av,R_ints_av,IR_ints_av,conv_ints_av,fmin,fmax,res,mcode,s
 #                                                 use_line_collection=True,bottom=0,label='Conv.')
 #    plt.setp(stemline, linewidth = 1.25)
 #    plt.setp(markerline, markersize = 6)    
-    plt.xlim(fmin,fmax)
-    pmin=int(fmin/res)
+   # plt.xlim(fmin,fmax)
+    pmin=0#int(fmin/res)
     pmax=int(fmax/res)
+    print(pmin,pmax)
     maxpr=np.max(conv_ints_av[pmin:pmax]) #np.max(prod_ints)
     maxI=np.max(IR_ints_av[pmin:pmax])
     maxR=np.max(R_ints_av[pmin:pmax])
@@ -387,7 +388,8 @@ def plot_spectra(s_wn_av,R_ints_av,IR_ints_av,conv_ints_av,fmin,fmax,res,mcode,s
 # plot polar plot of IR, Raman, conv value for initial molecular orientation
 def polar_plot(theta,r):
     plt.rcParams.update({'font.size': 14})
-    fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
+    plt.close('Polar plot')
+    fig, ax = plt.subplots(num='Polar plot',subplot_kw={'projection': 'polar'})
     line=ax.plot(theta,r,linewidth=7.0)
     #ax.set_rmax(max(r))
     ax.set_rticks([])
