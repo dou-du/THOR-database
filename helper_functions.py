@@ -30,9 +30,10 @@ def calc_scaling(T):
     k=phys_constants['k']
     scalingR=math.pow(10, 4)*h*math.pow(math.pi, 2)/((math.pow(10, 32)*amu)*(math.pow(10, 2)*c)*22.5)
     scalingR=45*math.pow(scaling_factors['A'],4)*scalingR
+    scalingpolar=math.pow(scaling_factors['A'],4)
     scalingexp=-h*(math.pow(10, 2)*c)/(k*T)
     scalingIR=math.pow(scaling_factors['D']/scaling_factors['A'],2)*scaling_factors['IRfac']
-    return scalingIR,scalingR,scalingexp
+    return scalingIR,scalingR,scalingexp, scalingpolar
 
 def symmetrize(a):
     return a + a.T - np.diag(a.diagonal())
