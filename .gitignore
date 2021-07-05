@@ -3,3 +3,8 @@
 *.pyc
 .ipynb_checkpoints/database_analysis-checkpoint.ipynb
 .ipynb_checkpoints/single_mode_analysis-checkpoint.ipynb
+*.mol
+.ipynb_checkpoints/.single_mode_analysis-0-checkpoint.ipynb
+.single_mode_analysis-0.ipynb
+.single_mode_analysis-0.ipynb
+.ipynb_checkpoints/.single_mode_analysis-0-checkpoint.ipynb
