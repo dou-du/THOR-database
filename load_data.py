@@ -342,7 +342,7 @@ def load_file(filename):
     if filename.endswith(".fchk"):
         try:
             fr,Q,Z,W,D,P,nat,aniso=load_from_Hessian(filename)
-            print("Loaded ",filename)
+       #     print("Loaded ",filename)
             return fr,Z,Q,D,P,nat,aniso
         except:
             print("Error with loading file ",filename)
@@ -351,7 +351,7 @@ def load_file(filename):
     if filename.endswith(".out"):
         try:
             fr,Z,Q,D,P,nat,aniso =load_from_output(filename) 
-            print("Loaded ",filename)
+        #    print("Loaded ",filename)
             return fr,Z,Q,D,P,nat,aniso
         except:
             print("Error with loading file ",filename)
