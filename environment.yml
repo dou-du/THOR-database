@@ -8,7 +8,7 @@ dependencies:
         - appmode
         - ipympl
         - numpy
-        - openbabel
+        - openbabel=2.4.1
         - nglview
         - mplcursors
         - qgrid
